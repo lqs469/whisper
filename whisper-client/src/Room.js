@@ -9,8 +9,9 @@ import {
 } from "react-router-dom";
 import * as RoomClient from "./roomClient";
 
-export default function Room({ rc, audioSelector, videoSelector }) {
+export default function Room({ audioSelector, videoSelector }) {
     let match = useRouteMatch();
+    const { rc } = window;
 
     return (
         <div>
@@ -49,7 +50,7 @@ export default function Room({ rc, audioSelector, videoSelector }) {
                     </button>
                     <button
                         id="startAudioButton"
-                        onClick={() => rc.produce(RoomClient.mediaType.audio, audioSelector.value)}
+                        onClick={() => rc.produce(RoomClient.mediaType.audio, audioSelector.current.value)}
                     >
                         Open audio
                     </button>
@@ -58,7 +59,7 @@ export default function Room({ rc, audioSelector, videoSelector }) {
                     </button>
                     <button
                         id="startVideoButton"
-                        onClick={() => rc.produce(RoomClient.mediaType.video, videoSelector.value)}
+                        onClick={() => rc.produce(RoomClient.mediaType.video, videoSelector.current.value)}
                     >
                         Open video
                     </button>

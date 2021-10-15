@@ -267,7 +267,6 @@ class RoomClient {
     let mediaConstraints = {}
     let audio = false
     let screen = false
-
     switch (type) {
       case mediaType.audio:
         mediaConstraints = {
@@ -291,9 +290,9 @@ class RoomClient {
               ideal: 1080
             },
             deviceId: deviceId
-            // aspectRatio: {
-            //   ideal: 1.7777777778
-            // }
+            /*aspectRatio: {
+                            ideal: 1.7777777778
+                        }*/
           }
         }
         break
@@ -304,19 +303,15 @@ class RoomClient {
       default:
         return
     }
-
     if (!this.device.canProduce('video') && !audio) {
       console.error('Cannot produce video')
       return
     }
-
     if (this.producerLabel.has(type)) {
       console.log('Producer already exists for this type ' + type)
       return
     }
-
-    console.log('Media contraints:', mediaConstraints)
-
+    console.log('Mediacontraints:', mediaConstraints)
     let stream
     try {
       stream = screen
@@ -328,7 +323,6 @@ class RoomClient {
       const params = {
         track
       }
-
       if (!audio && !screen) {
         params.encodings = [
           {
@@ -352,7 +346,6 @@ class RoomClient {
           videoGoogleStartBitrate: 1000
         }
       }
-
       producer = await this.producerTransport.produce(params)
 
       console.log('Producer', producer)

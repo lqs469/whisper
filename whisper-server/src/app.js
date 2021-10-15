@@ -1,5 +1,4 @@
 const express = require('express')
-const cors = require('cors')
 
 const app = express()
 const https = require('httpolyglot')
@@ -22,7 +21,6 @@ const io = require('socket.io')(httpsServer, {
   }
 })
 
-app.use(cors())
 app.use(express.static(path.join(__dirname, '..', 'public')))
 
 httpsServer.listen(config.listenPort, () => {
@@ -53,9 +51,9 @@ let nextMediasoupWorkerIdx = 0
  */
 let roomList = new Map()
 
-  ; (async () => {
-    await createWorkers()
-  })()
+;(async () => {
+  await createWorkers()
+})()
 
 async function createWorkers() {
   let { numWorkers } = config.mediasoup
@@ -75,10 +73,11 @@ async function createWorkers() {
     workers.push(worker)
 
     // log worker resource usage
-    // setInterval(async () => {
-    //   const usage = await worker.getResourceUsage();
-    //   console.info('mediasoup Worker resource usage [pid:%d]: %o', worker.pid, usage);
-    // }, 1000);
+    /*setInterval(async () => {
+            const usage = await worker.getResourceUsage();
+
+            console.info('mediasoup Worker resource usage [pid:%d]: %o', worker.pid, usage);
+        }, 120000);*/
   }
 }
 

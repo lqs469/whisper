@@ -14,8 +14,8 @@ import Home from "./Home";
 import Room from "./Room";
 import RoomClient from "./roomClient";
 
-const socket = io("https://127.0.0.1:3016");
-let rc = null
+const socket = io("https://whisper.lqs469.com");
+window.rc = null;
 
 export default function App() {
   const [audioOptions, setAudioOptions] = useState([]);
@@ -70,34 +70,34 @@ export default function App() {
     }
 
     function addListeners() {
-      rc.on(RoomClient.EVENTS.startScreen, () => {
+      window.rc.on(RoomClient.EVENTS.startScreen, () => {
         // hide(startScreenButton)
         // reveal(stopScreenButton)
       })
 
-      rc.on(RoomClient.EVENTS.stopScreen, () => {
+      window.rc.on(RoomClient.EVENTS.stopScreen, () => {
         // hide(stopScreenButton)
         // reveal(startScreenButton)
       })
 
-      rc.on(RoomClient.EVENTS.stopAudio, () => {
+      window.rc.on(RoomClient.EVENTS.stopAudio, () => {
         // hide(stopAudioButton)
         // reveal(startAudioButton)
       })
-      rc.on(RoomClient.EVENTS.startAudio, () => {
+      window.rc.on(RoomClient.EVENTS.startAudio, () => {
         // hide(startAudioButton)
         // reveal(stopAudioButton)
       })
 
-      rc.on(RoomClient.EVENTS.startVideo, () => {
+      window.rc.on(RoomClient.EVENTS.startVideo, () => {
         // hide(startVideoButton)
         // reveal(stopVideoButton)
       })
-      rc.on(RoomClient.EVENTS.stopVideo, () => {
+      window.rc.on(RoomClient.EVENTS.stopVideo, () => {
         // hide(stopVideoButton)
         // reveal(startVideoButton)
       })
-      rc.on(RoomClient.EVENTS.exitRoom, () => {
+      window.rc.on(RoomClient.EVENTS.exitRoom, () => {
         // hide(control)
         // hide(devicesList)
         // hide(videoMedia)
@@ -107,16 +107,16 @@ export default function App() {
       })
     }
 
-    if (rc && rc.isOpen()) {
+    if (window.rc && window.rc.isOpen()) {
       console.log('Already connected to a room')
     } else {
       initEnumerateDevices()
 
-      rc = new RoomClient(mediasoupClient, socket, roomId, name, () => cb(roomId))
+      window.rc = new RoomClient(mediasoupClient, socket, roomId, name, () => cb(roomId));
 
       addListeners()
     }
-  }, []);
+  });
 
   useEffect(() => {
     socket.request = function request(type, data = {}) {
@@ -184,7 +184,7 @@ export default function App() {
             <Home joinRoom={joinRoom} />
           </Route>
           <Route path="/room">
-            <Room rc={rc} videoSelector={videoSelector.current} audioSelector={audioSelector.current} />
+            <Room videoSelector={videoSelector} audioSelector={audioSelector} />
           </Route>
           <Route path="/about">
             <About />

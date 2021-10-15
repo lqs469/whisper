@@ -50,15 +50,18 @@ module.exports = class Room {
     if (maxIncomingBitrate) {
       try {
         await transport.setMaxIncomingBitrate(maxIncomingBitrate)
-      } catch (error) { }
+      } catch (error) {}
     }
 
-    transport.on('dtlsstatechange', (dtlsState) => {
-      if (dtlsState === 'closed') {
-        console.log('Transport close', { name: this.peers.get(socket_id).name })
-        transport.close()
-      }
-    })
+    transport.on(
+      'dtlsstatechange',
+      function (dtlsState) {
+        if (dtlsState === 'closed') {
+          console.log('Transport close', { name: this.peers.get(socket_id).name })
+          transport.close()
+        }
+      }.bind(this)
+    )
 
     transport.on('close', () => {
       console.log('Transport close', { name: this.peers.get(socket_id).name })
@@ -66,7 +69,6 @@ module.exports = class Room {
 
     console.log('Adding transport', { transportId: transport.id })
     this.peers.get(socket_id).addTransport(transport)
-
     return {
       params: {
         id: transport.id,
@@ -118,7 +120,7 @@ module.exports = class Room {
     consumer.on(
       'producerclose',
       function () {
-        console.log('Consumer closed due to producer close event', {
+        console.log('Consumer closed due to producerclose event', {
           name: `${this.peers.get(socket_id).name}`,
           consumer_id: `${consumer.id}`
         })
