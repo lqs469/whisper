@@ -15,7 +15,35 @@ import Room from "./Room";
 import RoomClient from "./roomClient";
 
 const socket = io("https://whisper.lqs469.com");
+socket.request = function request(type, data = {}) {
+  return new Promise((resolve, reject) => {
+    socket.emit(type, data, (data) => {
+      if (data.error) {
+        reject(data.error)
+      } else {
+        resolve(data)
+      }
+    })
+  })
+}
+
 window.rc = null;
+
+// function roomOpen() {
+//   alert("room open");
+//   login.className = 'hidden'
+//   reveal(startAudioButton)
+//   hide(stopAudioButton)
+//   reveal(startVideoButton)
+//   hide(stopVideoButton)
+//   reveal(startScreenButton)
+//   hide(stopScreenButton)
+//   reveal(exitButton)
+//   reveal(copyButton)
+//   reveal(devicesButton)
+//   control.className = ''
+//   reveal(videoMedia)
+// }
 
 export default function App() {
   const [audioOptions, setAudioOptions] = useState([]);
@@ -118,36 +146,6 @@ export default function App() {
     }
   });
 
-  useEffect(() => {
-    socket.request = function request(type, data = {}) {
-      return new Promise((resolve, reject) => {
-        socket.emit(type, data, (data) => {
-          if (data.error) {
-            reject(data.error)
-          } else {
-            resolve(data)
-          }
-        })
-      })
-    }
-
-    // function roomOpen() {
-    //   alert("room open");
-    //   login.className = 'hidden'
-    //   reveal(startAudioButton)
-    //   hide(stopAudioButton)
-    //   reveal(startVideoButton)
-    //   hide(stopVideoButton)
-    //   reveal(startScreenButton)
-    //   hide(stopScreenButton)
-    //   reveal(exitButton)
-    //   reveal(copyButton)
-    //   reveal(devicesButton)
-    //   control.className = ''
-    //   reveal(videoMedia)
-    // }
-  }, []);
-
   return (
     <Router>
       <div>
@@ -178,9 +176,10 @@ export default function App() {
             }
           </select>
         </div>
+        <br />
 
-        <Switch>
-          <Route exact path="/">
+        <div>
+          <Route path="/">
             <Home joinRoom={joinRoom} />
           </Route>
           <Route path="/room">
@@ -189,7 +188,7 @@ export default function App() {
           <Route path="/about">
             <About />
           </Route>
-        </Switch>
+        </div>
       </div>
     </Router>
   );

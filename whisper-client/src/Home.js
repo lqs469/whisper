@@ -1,18 +1,42 @@
-import React, { useState, useCallback } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState, useCallback, useEffect } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 
 export default function Home({ joinRoom }) {
+    let location = useLocation();
     const history = useHistory();
     const [room, setRoom] = useState("123");
     const [name, setName] = useState("user_" + Math.round(Math.random() * 100000).toString(16));
+    const [joined, setJoined] = useState(false);
+    const [joining, setJoining] = useState(false);
 
     const handleJoin = useCallback(() => {
-        joinRoom(name, room, (roomId) => {
-            history.push("/room/" + roomId);
-        });
-    }, [room, name, joinRoom, history]);
+        setJoining(true);
+        if (!joining && !joined) {
+            joinRoom(name, room, (roomId) => {
+                history.push("/room/" + roomId);
+                setJoined(true);
+                setJoining(false);
+            });
+        }
+    }, [joining, joined, room, name, joinRoom, history]);
 
-    return (
+    useEffect(() => {
+        if (location.pathname.includes("room")) {
+            setJoining(true);
+            if (!joining && !joined) {
+                joinRoom(name, room, () => {
+                    setJoined(true);
+                    setJoining(false);
+                });
+            }
+        }
+    }, [joinRoom, joined, joining, location.pathname, name, room]);
+
+    if (joined) {
+        return null;
+    }
+
+    return joining ? "Joining..." : (
         <div>
             <div id="login">
                 <div>

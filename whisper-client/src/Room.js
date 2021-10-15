@@ -10,7 +10,7 @@ import {
 import * as RoomClient from "./roomClient";
 
 export default function Room({ audioSelector, videoSelector }) {
-    let match = useRouteMatch();
+    const match = useRouteMatch();
     const { rc } = window;
 
     return (
