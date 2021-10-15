@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link,
+    useHistory,
     useRouteMatch,
     useParams
 } from "react-router-dom";
@@ -11,7 +11,14 @@ import * as RoomClient from "./roomClient";
 
 export default function Room({ audioSelector, videoSelector }) {
     const match = useRouteMatch();
+    const history = useHistory();
     const { rc } = window;
+
+    useEffect(() => {
+        return () => {
+            window.rc.exit()
+        }
+    }, []);
 
     return (
         <div>
@@ -39,7 +46,7 @@ export default function Room({ audioSelector, videoSelector }) {
             <div>
                 <div id="control">
                     <br />
-                    <button id="exitButton" onClick={() => rc.exit()}>
+                    <button id="exitButton" onClick={() => history.push("/")}>
                         Exit
                     </button>
                     <button id="copyButton" onClick={() => rc.copyURL()}>

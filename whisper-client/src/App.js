@@ -14,10 +14,10 @@ import Home from "./Home";
 import Room from "./Room";
 import RoomClient from "./roomClient";
 
-const socket = io("https://whisper.lqs469.com");
-socket.request = function request(type, data = {}) {
+window.socket = io("https://whisper.lqs469.com");
+window.socket.request = function request(type, data = {}) {
   return new Promise((resolve, reject) => {
-    socket.emit(type, data, (data) => {
+    window.socket.emit(type, data, (data) => {
       if (data.error) {
         reject(data.error)
       } else {
@@ -46,6 +46,7 @@ window.rc = null;
 // }
 
 export default function App() {
+  const [connected, setConnected] = useState(false);
   const [audioOptions, setAudioOptions] = useState([]);
   const [videoOptions, setVideoOptions] = useState([]);
   const audioSelector = useRef(null);
@@ -97,54 +98,18 @@ export default function App() {
       )
     }
 
-    function addListeners() {
-      window.rc.on(RoomClient.EVENTS.startScreen, () => {
-        // hide(startScreenButton)
-        // reveal(stopScreenButton)
-      })
-
-      window.rc.on(RoomClient.EVENTS.stopScreen, () => {
-        // hide(stopScreenButton)
-        // reveal(startScreenButton)
-      })
-
-      window.rc.on(RoomClient.EVENTS.stopAudio, () => {
-        // hide(stopAudioButton)
-        // reveal(startAudioButton)
-      })
-      window.rc.on(RoomClient.EVENTS.startAudio, () => {
-        // hide(startAudioButton)
-        // reveal(stopAudioButton)
-      })
-
-      window.rc.on(RoomClient.EVENTS.startVideo, () => {
-        // hide(startVideoButton)
-        // reveal(stopVideoButton)
-      })
-      window.rc.on(RoomClient.EVENTS.stopVideo, () => {
-        // hide(stopVideoButton)
-        // reveal(startVideoButton)
-      })
-      window.rc.on(RoomClient.EVENTS.exitRoom, () => {
-        // hide(control)
-        // hide(devicesList)
-        // hide(videoMedia)
-        // hide(copyButton)
-        // hide(devicesButton)
-        // reveal(login)
-      })
-    }
-
     if (window.rc && window.rc.isOpen()) {
       console.log('Already connected to a room')
     } else {
       initEnumerateDevices()
 
-      window.rc = new RoomClient(mediasoupClient, socket, roomId, name, () => cb(roomId));
-
-      addListeners()
+      window.rc = new RoomClient(mediasoupClient, window.socket, roomId, name, () => cb(roomId));
     }
   });
+
+  useEffect(() => {
+    setConnected(true);
+  }, []);
 
   return (
     <Router>
@@ -178,17 +143,19 @@ export default function App() {
         </div>
         <br />
 
-        <div>
-          <Route path="/">
-            <Home joinRoom={joinRoom} />
-          </Route>
-          <Route path="/room">
-            <Room videoSelector={videoSelector} audioSelector={audioSelector} />
-          </Route>
-          <Route path="/about">
-            <About />
-          </Route>
-        </div>
+        {
+          connected && <div>
+            <Route path="/">
+              <Home joinRoom={joinRoom} />
+            </Route>
+            <Route path="/room">
+              <Room videoSelector={videoSelector} audioSelector={audioSelector} />
+            </Route>
+            <Route path="/about">
+              <About />
+            </Route>
+          </div>
+        }
       </div>
     </Router>
   );

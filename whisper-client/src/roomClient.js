@@ -592,6 +592,11 @@ export default class RoomClient {
 
     ///////  HELPERS //////////
 
+    async roomList() {
+        const list = await this.socket.request('getMyRoomList');
+        return list
+    }
+
     async roomInfo() {
         let info = await this.socket.request('getMyRoomInfo')
         return info

@@ -197,6 +197,12 @@ io.on('connection', (socket) => {
     callback()
   })
 
+  socket.on('getMyRoomList', (_, cb) => {
+    const list = Array.from(roomList).map(([key]) => ({ id: key }))
+    console.log('Get Room List:', list)
+    cb(list);
+  })
+
   socket.on('getMyRoomInfo', (_, cb) => {
     cb(roomList.get(socket.room_id).toJson())
   })
