@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react'
 
-export default function List({ name, handleJoin }) {
+export default function List({ handleJoin }) {
     const [list, setList] = useState([]);
 
     useEffect(() => {
         window.socket.request('getMyRoomList').then(list => {
-            console.log(list);
             setList(list);
         })
     }, [])
 
     return (
-        <div>
+        <ul>
             {
-                list.map(item => <div key={item.id} onClick={() => handleJoin(name, item.id)}>{item.id}</div>)
+                list.map(item => <li key={item.id} onClick={() => handleJoin(item.id)}>{item.id}</li>)
             }
-        </div>
+        </ul>
     )
 }
